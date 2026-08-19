@@ -33,28 +33,18 @@
     });
   }
 
-  /* Active nav link + header shadow + back-to-top on scroll */
-  var navLinks = document.querySelectorAll(".nav-links a");
-  var sections = Array.prototype.slice
-    .call(navLinks)
-    .map(function (a) {
-      return document.querySelector(a.getAttribute("href"));
-    })
-    .filter(Boolean);
+  /* Active nav link (current page) + back-to-top on scroll */
+  var navLinks = document.querySelectorAll(".nav-links a, .mobile-menu nav a");
+  var currentPage = location.pathname.split("/").pop() || "index.html";
+  navLinks.forEach(function (a) {
+    var href = a.getAttribute("href");
+    if (!href || href.charAt(0) === "#") return;
+    var isHome = currentPage === "index.html" && href === "index.html";
+    a.classList.toggle("active", href === currentPage || isHome);
+  });
 
   function onScroll() {
-    var y = window.scrollY;
-
-    if (toTop) toTop.classList.toggle("is-visible", y > 600);
-
-    var current = sections[0];
-    sections.forEach(function (sec) {
-      if (y >= sec.offsetTop - 140) current = sec;
-    });
-    navLinks.forEach(function (a) {
-      var match = current && a.getAttribute("href") === "#" + current.id;
-      a.classList.toggle("active", !!match);
-    });
+    if (toTop) toTop.classList.toggle("is-visible", window.scrollY > 600);
   }
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
